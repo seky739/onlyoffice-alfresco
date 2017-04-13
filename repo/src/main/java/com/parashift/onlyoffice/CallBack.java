@@ -2,11 +2,16 @@ package com.parashift.onlyoffice;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
+import org.alfresco.repo.version.Node2ServiceImpl;
 import org.alfresco.service.cmr.lock.LockService;
 import org.alfresco.service.cmr.lock.LockStatus;
 import org.alfresco.service.cmr.lock.LockType;
 import org.alfresco.service.cmr.repository.ContentService;
+import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.namespace.QName;
+import org.alfresco.web.bean.repository.Node;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.json.JSONObject;
@@ -22,9 +27,11 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.io.Writer;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.Map;
 
 /**
  * Created by cetra on 20/10/15.
@@ -99,7 +106,28 @@ public class CallBack extends AbstractWebScript {
 
         try {
             InputStream in = new URL( url ).openStream();
-            contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true).putContent(in);
+            ContentWriter writer = contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true);
+
+
+            String mimt=writer.getMimetype();
+            switch (mimt){
+                case "application/msword" : {
+                    writer.setMimetype("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+
+                }break;
+                case "application/vnd.ms-powerpoint": {
+                    writer.setMimetype("application/vnd.openxmlformats-officedocument.presentationml.presentation");
+                   // name.replace("ppt","pptx");
+                }break;
+                case "application/vnd.ms-excel": {
+                    writer.setMimetype("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                   // name.replace("xls","xlsx");
+                }break;
+
+            }
+
+            writer.putContent(in);
+
         } catch (IOException e) {
             logger.error(ExceptionUtils.getFullStackTrace(e));
         }
