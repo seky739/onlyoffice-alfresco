@@ -103,6 +103,9 @@ public class CallBack extends AbstractWebScript {
             InputStream in = new URL( url ).openStream();
             ContentWriter writer = contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true);
 
+            logger.debug("NODEREF: ",nodeRef);
+
+
 
             String mimt=writer.getMimetype();
             switch (mimt){
@@ -121,9 +124,18 @@ public class CallBack extends AbstractWebScript {
                 //odt na docx
                 case "application/vnd.oasis.opendocument.text": {
                     writer.setMimetype("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
-                    // name.replace("xls","xlsx");
+                    // name.replace("odt","docx");
                 }break;
-                //
+                //ods na xlsx
+                case "application/vnd.oasis.opendocument.spreadsheet": {
+                    writer.setMimetype("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                    // name.replace("ods","xlsx");
+                }break;
+                // odp na pptx
+                case "application/vnd.oasis.opendocument.presentation": {
+                    writer.setMimetype("application/vnd.openxmlformats-officedocument.presentationml.presentation");
+                    // name.replace("odp","pptx");
+                }break;
 
             }
 
