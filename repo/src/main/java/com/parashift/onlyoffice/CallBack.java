@@ -60,7 +60,7 @@ public class CallBack extends AbstractWebScript {
         NodeRef nodeRef = new NodeRef("workspace://SpacesStore/" + keyParts[0]);
 
 
-        logger.debug("KEY PART :    "+keyParts[0]);
+        //logger.debug("KEY PART :    "+keyParts[0]);
 
         //Status codes from here: https://api.onlyoffice.com/editors/editor
 
@@ -112,6 +112,7 @@ public class CallBack extends AbstractWebScript {
             switch (mimt){
                 case "application/msword" : {
                     writer.setMimetype("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+                    
                 }break;
                 case "application/vnd.ms-powerpoint": {
                     writer.setMimetype("application/vnd.openxmlformats-officedocument.presentationml.presentation");
@@ -148,42 +149,42 @@ public class CallBack extends AbstractWebScript {
             switch (mimt){
                 case "application/msword" : {
                     behaviourFilter.disableBehaviour(nodeRef);
-                    nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace("doc","docx"));
+                    nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace(".doc",".docx"));
                 }break;
                 case "application/vnd.ms-powerpoint": {
                     behaviourFilter.disableBehaviour(nodeRef);
-                    nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace("ppt","pptx"));
+                    nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace(".ppt",".pptx"));
                     // name.replace("ppt","pptx");
                 }break;
                 case "application/vnd.ms-excel": {
                     behaviourFilter.disableBehaviour(nodeRef);
-                    nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace("xls","xlsx"));
+                    nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace(".xls",".xlsx"));
                     // name.replace("xls","xlsx");
                 }break;
                 //odt na docx
                 case "application/vnd.oasis.opendocument.text": {
                     behaviourFilter.disableBehaviour(nodeRef);
-                    nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace("odt","docx"));
+                    nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace(".odt",".docx"));
                     // name.replace("odt","docx");
                 }break;
                 //ods na xlsx
                 case "application/vnd.oasis.opendocument.spreadsheet": {
                     behaviourFilter.disableBehaviour(nodeRef);
-                    nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace("ods","xlsx"));
+                    nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace(".ods",".xlsx"));
                     // name.replace("ods","xlsx");
                 }break;
                 // odp na pptx
                 case "application/vnd.oasis.opendocument.presentation": {
                     behaviourFilter.disableBehaviour(nodeRef);
-                    nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace("odp","pptx"));
+                    nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace(".odp",".pptx"));
                     // name.replace("odp","pptx");
                 }break;
 
             }
             //nodeService.setProperty(nodeRef, ContentModel.PROP_TITLE, nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace("doc","docx"));
             //nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, "Test.DOCX");
-            logger.debug("PROP_NAME :      "+nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString());
-            logger.debug("");
+            //logger.debug("PROP_NAME :      "+nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString());
+            //logger.debug("");
 
         } catch (IOException e) {
             logger.error(ExceptionUtils.getFullStackTrace(e));
