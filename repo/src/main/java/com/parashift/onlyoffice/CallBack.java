@@ -2,17 +2,12 @@ package com.parashift.onlyoffice;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
-import org.alfresco.repo.version.Node2ServiceImpl;
+
 import org.alfresco.service.cmr.lock.LockService;
 import org.alfresco.service.cmr.lock.LockStatus;
 import org.alfresco.service.cmr.lock.LockType;
-import org.alfresco.service.cmr.repository.ContentService;
-import org.alfresco.service.cmr.repository.ContentWriter;
-import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.namespace.QName;
+import org.alfresco.service.cmr.repository.*;
 import org.alfresco.web.bean.repository.Node;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -123,6 +118,12 @@ public class CallBack extends AbstractWebScript {
                     writer.setMimetype("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
                    // name.replace("xls","xlsx");
                 }break;
+                //odt na docx
+                case "application/vnd.oasis.opendocument.text": {
+                    writer.setMimetype("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+                    // name.replace("xls","xlsx");
+                }break;
+                //
 
             }
 
