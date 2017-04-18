@@ -43,6 +43,9 @@ public class CallBack extends AbstractWebScript {
     @Autowired
     ContentService contentService;
 
+    @Autowired
+    NodeService nodeService;
+
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
@@ -55,6 +58,9 @@ public class CallBack extends AbstractWebScript {
 
         String[] keyParts = callBackJSon.getString("key").split("_");
         NodeRef nodeRef = new NodeRef("workspace://SpacesStore/" + keyParts[0]);
+
+
+        logger.debug("KEY PART :    "+keyParts[0]);
 
         //Status codes from here: https://api.onlyoffice.com/editors/editor
 
@@ -98,48 +104,52 @@ public class CallBack extends AbstractWebScript {
 
     private void updateNode(NodeRef nodeRef, String url) {
         logger.debug("Retrieving URL:{}", url);
-
+        behaviourFilter.disableBehaviour(nodeRef);
         try {
             InputStream in = new URL( url ).openStream();
             ContentWriter writer = contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true);
-
-            logger.debug("NODEREF: ",nodeRef);
-
-
-
             String mimt=writer.getMimetype();
             switch (mimt){
                 case "application/msword" : {
                     writer.setMimetype("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
-
+                    nodeService.setProperty(nodeRef, ContentModel.PROP_TITLE,nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace("doc","docx"));
                 }break;
                 case "application/vnd.ms-powerpoint": {
                     writer.setMimetype("application/vnd.openxmlformats-officedocument.presentationml.presentation");
+                    nodeService.setProperty(nodeRef, ContentModel.PROP_TITLE,nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace("ppt","pptx"));
                    // name.replace("ppt","pptx");
                 }break;
                 case "application/vnd.ms-excel": {
                     writer.setMimetype("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                    nodeService.setProperty(nodeRef, ContentModel.PROP_TITLE,nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace("xls","xlsx"));
                    // name.replace("xls","xlsx");
                 }break;
                 //odt na docx
                 case "application/vnd.oasis.opendocument.text": {
                     writer.setMimetype("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+                    nodeService.setProperty(nodeRef, ContentModel.PROP_TITLE,nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace("odt","docx"));
                     // name.replace("odt","docx");
                 }break;
                 //ods na xlsx
                 case "application/vnd.oasis.opendocument.spreadsheet": {
                     writer.setMimetype("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                    nodeService.setProperty(nodeRef, ContentModel.PROP_TITLE,nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace("ods","xlsx"));
                     // name.replace("ods","xlsx");
                 }break;
                 // odp na pptx
                 case "application/vnd.oasis.opendocument.presentation": {
                     writer.setMimetype("application/vnd.openxmlformats-officedocument.presentationml.presentation");
+                    nodeService.setProperty(nodeRef, ContentModel.PROP_TITLE,nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace("odp","pptx"));
+
                     // name.replace("odp","pptx");
                 }break;
 
             }
 
             writer.putContent(in);
+            
+            logger.debug("PROP_NAME :      "+nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString());
+            logger.debug("");
 
         } catch (IOException e) {
             logger.error(ExceptionUtils.getFullStackTrace(e));
