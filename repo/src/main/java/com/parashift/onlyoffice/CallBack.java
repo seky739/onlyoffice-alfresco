@@ -152,7 +152,7 @@ public class CallBack extends AbstractWebScript {
             switch (mimt){
                 case "application/msword" : {
                     behaviourFilter.disableBehaviour(nodeRef);
-                    String newName=(String)nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace(".doc","");
+                   /* String newName=(String)nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace(".doc","");
 
                     ChildAssociationRef childAssociationRef = nodeService.getPrimaryParent(nodeRef);
                         NodeRef parent = childAssociationRef.getParentRef();
@@ -184,6 +184,9 @@ public class CallBack extends AbstractWebScript {
                         //logger.debug((String)nodeService.getProperty(parent, ContentModel.PROP_NAME));
                         if (number>0 && !isFirstExist){number+=1;nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace(".doc"," ("+number+").docx"));}
                         else{nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace(".doc",".docx"));}
+                **/
+                    nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, detectDuplicationName(nodeRef));
+
                 }break;
                 case "application/vnd.ms-powerpoint": {
                     behaviourFilter.disableBehaviour(nodeRef);
@@ -224,5 +227,53 @@ public class CallBack extends AbstractWebScript {
             logger.error(ExceptionUtils.getFullStackTrace(e));
         }
     }
+
+    private String detectDuplicationName(NodeRef nodeRef){
+        String finalName="";
+        String newName=(String) nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace(".doc","");
+
+        ChildAssociationRef childAssociationRef = nodeService.getPrimaryParent(nodeRef);
+        NodeRef parent = childAssociationRef.getParentRef();
+
+        List<ChildAssociationRef> childRefList = new ArrayList<ChildAssociationRef>();
+        childRefList = nodeService.getChildAssocs(parent);
+        int number=-1;
+        boolean isFirstExist=true;
+        for (ChildAssociationRef childRef : childRefList) {
+            NodeRef nodeChildRef = childRef.getChildRef();
+            String name=(String)nodeService.getProperty(nodeChildRef, ContentModel.PROP_NAME);
+            //logger.debug((String)nodeService.getProperty(nodeChildRef, ContentModel.PROP_NAME));
+            if(name.equals(newName+".docx"))isFirstExist=false;
+            if (name.toLowerCase().contains(newName.toLowerCase())){
+                //number++;
+                for (int i=name.length()-1;i>0;i--){
+                    //logger.debug(name.charAt(i)+" pozice "+i);
+                    if(Character.isDigit(name.charAt(i))){
+                        int foundNmb=name.charAt(i)-'0';
+                        logger.debug("Cislo : "+foundNmb);
+                        if(number<foundNmb)number=foundNmb;
+                        break;
+                    }
+                }
+
+
+            }
+        }
+        //logger.debug((String)nodeService.getProperty(parent, ContentModel.PROP_NAME));
+        if (number>0 && !isFirstExist) {
+            number += 1;
+            finalName = nodeService.getProperty(nodeRef, ContentModel.PROP_NAME).toString().replace(".doc", " (" + number + ").docx");
+        }//nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace(".doc"," ("+number+").docx"));}
+        else{
+            finalName=nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace(".doc",".docx");
+            //nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace(".doc",".docx"));
+        }
+        return finalName;
+    }
+
+
+
+
+
 }
 
