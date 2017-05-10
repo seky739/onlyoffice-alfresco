@@ -8,6 +8,7 @@ import org.alfresco.service.cmr.lock.LockStatus;
 import org.alfresco.service.cmr.lock.LockType;
 import org.alfresco.service.cmr.repository.*;
 import org.alfresco.web.bean.repository.Node;
+
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -26,6 +27,8 @@ import java.io.Serializable;
 import java.io.Writer;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -112,7 +115,7 @@ public class CallBack extends AbstractWebScript {
             switch (mimt){
                 case "application/msword" : {
                     writer.setMimetype("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
-                    
+
                 }break;
                 case "application/vnd.ms-powerpoint": {
                     writer.setMimetype("application/vnd.openxmlformats-officedocument.presentationml.presentation");
@@ -149,7 +152,23 @@ public class CallBack extends AbstractWebScript {
             switch (mimt){
                 case "application/msword" : {
                     behaviourFilter.disableBehaviour(nodeRef);
-                    nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace(".doc",".docx"));
+                    String newName=(String)nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace(".doc","");
+
+                    ChildAssociationRef childAssociationRef = nodeService.getPrimaryParent(nodeRef);
+                        NodeRef parent = childAssociationRef.getParentRef();
+
+                    List<ChildAssociationRef> childRefList = new ArrayList<ChildAssociationRef>();
+                    childRefList = nodeService.getChildAssocs(parent);
+                    int number=-1;
+                    for (ChildAssociationRef childRef : childRefList) {
+                        NodeRef nodeChildRef = childRef.getChildRef();
+                            String name=(String)nodeService.getProperty(nodeChildRef, ContentModel.PROP_NAME);
+                            //logger.debug((String)nodeService.getProperty(nodeChildRef, ContentModel.PROP_NAME));
+                            if (name.toLowerCase().contains(newName.toLowerCase())){number++; }
+                    }
+                        //logger.debug((String)nodeService.getProperty(parent, ContentModel.PROP_NAME));
+                        if (number>0){nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace(".doc"," ("+number+").docx"));}
+                        else{nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace(".doc",".docx"));}
                 }break;
                 case "application/vnd.ms-powerpoint": {
                     behaviourFilter.disableBehaviour(nodeRef);
