@@ -159,15 +159,17 @@ public class CallBack extends AbstractWebScript {
 
                     List<ChildAssociationRef> childRefList = new ArrayList<ChildAssociationRef>();
                     childRefList = nodeService.getChildAssocs(parent);
-                    int number=-1;
+                    int number=0;
+                    boolean isFirstExist=true;
                     for (ChildAssociationRef childRef : childRefList) {
                         NodeRef nodeChildRef = childRef.getChildRef();
                             String name=(String)nodeService.getProperty(nodeChildRef, ContentModel.PROP_NAME);
                             //logger.debug((String)nodeService.getProperty(nodeChildRef, ContentModel.PROP_NAME));
-                            if (name.toLowerCase().contains(newName.toLowerCase())){number++; }
+                        if(name.equals(newName+".docx"))isFirstExist=false;
+                        if (name.toLowerCase().contains(newName.toLowerCase())){number++; }
                     }
                         //logger.debug((String)nodeService.getProperty(parent, ContentModel.PROP_NAME));
-                        if (number>0){nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace(".doc"," ("+number+").docx"));}
+                        if (number>0 && !isFirstExist){nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace(".doc"," ("+number+").docx"));}
                         else{nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace(".doc",".docx"));}
                 }break;
                 case "application/vnd.ms-powerpoint": {
