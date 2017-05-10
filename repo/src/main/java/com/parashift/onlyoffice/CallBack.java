@@ -159,17 +159,30 @@ public class CallBack extends AbstractWebScript {
 
                     List<ChildAssociationRef> childRefList = new ArrayList<ChildAssociationRef>();
                     childRefList = nodeService.getChildAssocs(parent);
-                    int number=0;
+                    int number=-1;
                     boolean isFirstExist=true;
                     for (ChildAssociationRef childRef : childRefList) {
                         NodeRef nodeChildRef = childRef.getChildRef();
                             String name=(String)nodeService.getProperty(nodeChildRef, ContentModel.PROP_NAME);
                             //logger.debug((String)nodeService.getProperty(nodeChildRef, ContentModel.PROP_NAME));
                         if(name.equals(newName+".docx"))isFirstExist=false;
-                        if (name.toLowerCase().contains(newName.toLowerCase())){number++; }
+                        if (name.toLowerCase().contains(newName.toLowerCase())){
+                            //number++;
+                            for (int i=name.length()-1;i>0;i--){
+                                //logger.debug(name.charAt(i)+" pozice "+i);
+                                if(Character.isDigit(name.charAt(i))){
+                                    int foundNmb=name.charAt(i)-'0';
+                                    logger.debug("Cislo : "+foundNmb);
+                                    if(number<foundNmb)number=foundNmb;
+                                    break;
+                                }
+                            }
+
+
+                        }
                     }
                         //logger.debug((String)nodeService.getProperty(parent, ContentModel.PROP_NAME));
-                        if (number>0 && !isFirstExist){nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace(".doc"," ("+number+").docx"));}
+                        if (number>0 && !isFirstExist){number+=1;nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace(".doc"," ("+number+").docx"));}
                         else{nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace(".doc",".docx"));}
                 }break;
                 case "application/vnd.ms-powerpoint": {
