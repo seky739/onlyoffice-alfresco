@@ -248,7 +248,7 @@ public class CallBack extends AbstractWebScript {
             NodeRef nodeChildRef = childRef.getChildRef();
             String name=(String)nodeService.getProperty(nodeChildRef, ContentModel.PROP_NAME);
             //logger.debug((String)nodeService.getProperty(nodeChildRef, ContentModel.PROP_NAME));
-            if(name.equals(newName+".docx"))isFirstExist=false;
+            if(name.equals(newName+replace))isFirstExist=false;
             if (name.toLowerCase().contains(newName.toLowerCase())){
                 //number++;
                 for (int i=name.length()-1;i>0;i--){
