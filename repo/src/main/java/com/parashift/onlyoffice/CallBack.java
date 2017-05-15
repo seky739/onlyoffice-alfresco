@@ -185,35 +185,40 @@ public class CallBack extends AbstractWebScript {
                         if (number>0 && !isFirstExist){number+=1;nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace(".doc"," ("+number+").docx"));}
                         else{nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace(".doc",".docx"));}
                 **/
-                    nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, detectDuplicationName(nodeRef));
+                    nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, detectDuplicationName(nodeRef,".doc",".docx"));
 
                 }break;
                 case "application/vnd.ms-powerpoint": {
                     behaviourFilter.disableBehaviour(nodeRef);
-                    nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace(".ppt",".pptx"));
+                    nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, detectDuplicationName(nodeRef,".ppt",".pptx"));
+                    //nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace(".ppt",".pptx"));
                     // name.replace("ppt","pptx");
                 }break;
                 case "application/vnd.ms-excel": {
                     behaviourFilter.disableBehaviour(nodeRef);
-                    nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace(".xls",".xlsx"));
+                    nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, detectDuplicationName(nodeRef,".xls",".xlsx"));
+                    //nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace(".xls",".xlsx"));
                     // name.replace("xls","xlsx");
                 }break;
                 //odt na docx
                 case "application/vnd.oasis.opendocument.text": {
                     behaviourFilter.disableBehaviour(nodeRef);
-                    nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace(".odt",".docx"));
+                    nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, detectDuplicationName(nodeRef,".odt",".docx"));
+                    //nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace(".odt",".docx"));
                     // name.replace("odt","docx");
                 }break;
                 //ods na xlsx
                 case "application/vnd.oasis.opendocument.spreadsheet": {
                     behaviourFilter.disableBehaviour(nodeRef);
-                    nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace(".ods",".xlsx"));
+                    nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, detectDuplicationName(nodeRef,".ods",".xlsx"));
+                    //nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace(".ods",".xlsx"));
                     // name.replace("ods","xlsx");
                 }break;
                 // odp na pptx
                 case "application/vnd.oasis.opendocument.presentation": {
                     behaviourFilter.disableBehaviour(nodeRef);
-                    nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace(".odp",".pptx"));
+                    nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, detectDuplicationName(nodeRef,".odp",".pptx"));
+                    //nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace(".odp",".pptx"));
                     // name.replace("odp","pptx");
                 }break;
 
@@ -228,9 +233,9 @@ public class CallBack extends AbstractWebScript {
         }
     }
 
-    private String detectDuplicationName(NodeRef nodeRef){
+    private String detectDuplicationName(NodeRef nodeRef,String target,String replace){
         String finalName="";
-        String newName=(String) nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace(".doc","");
+        String newName=(String) nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace(target,"");
 
         ChildAssociationRef childAssociationRef = nodeService.getPrimaryParent(nodeRef);
         NodeRef parent = childAssociationRef.getParentRef();
@@ -262,10 +267,10 @@ public class CallBack extends AbstractWebScript {
         //logger.debug((String)nodeService.getProperty(parent, ContentModel.PROP_NAME));
         if (number>0 && !isFirstExist) {
             number += 1;
-            finalName = nodeService.getProperty(nodeRef, ContentModel.PROP_NAME).toString().replace(".doc", " (" + number + ").docx");
+            finalName = nodeService.getProperty(nodeRef, ContentModel.PROP_NAME).toString().replace(target, " (" + number + ")"+replace);
         }//nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace(".doc"," ("+number+").docx"));}
         else{
-            finalName=nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace(".doc",".docx");
+            finalName=nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace(target,replace);
             //nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, nodeService.getProperty(nodeRef,ContentModel.PROP_NAME).toString().replace(".doc",".docx"));
         }
         return finalName;
