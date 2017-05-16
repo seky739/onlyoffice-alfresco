@@ -65,7 +65,7 @@ The easiest way to start an instance of ONLYOFFICE is to use Docker: https://git
   ```
   or 
   
-    ```
+  ```
   alfresco.protocol=https
   alfresco.host=alfresco.yourcompany.local
   alfresco.port=443
