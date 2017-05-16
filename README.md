@@ -49,6 +49,11 @@ The easiest way to start an instance of ONLYOFFICE is to use Docker: https://git
   ```
   onlyoffice.url=http://documentserver/
   ```
+  or
+  
+  ```
+  onlyoffice.url=https://documentserver/
+  ```
 
 *  OnlyOffice will make the connection to Alfresco on behalf of the client, so OnlyOffice needs to be able to talk to Alfresco.  In order for OnlyOffice to do this, Alfresco needs to generate what it thinks the external URL is.  Make sure that the following properties are set correctly in `alfresco-global.properties`
 
@@ -58,7 +63,16 @@ The easiest way to start an instance of ONLYOFFICE is to use Docker: https://git
   alfresco.port=8080
   alfresco.context=alfresco
   ```
-
+  or 
+  
+    ```
+  alfresco.protocol=https
+  alfresco.host=alfresco.yourcompany.local
+  alfresco.port=443
+  alfresco.context=alfresco
+  ```
+* If you want to use SSL you must import certificate to instance ONLYOFFICE(to your document server). For me work if i have docker image and alfresco at same server.
+  
 * (Optional) set the default language that the editor will use.  By default the document editor should pick up the language of the browser, so it doesn't always need to be set.
 
   ```
